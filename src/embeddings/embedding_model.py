@@ -1,5 +1,8 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from src.config.settings import EMBEDDING_MODEL
+import sys
+from src.utils.logger import logger
+from src.utils.exceptions import CustomException
 
 
 class EmbeddingModel:

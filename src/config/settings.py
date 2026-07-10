@@ -49,7 +49,7 @@ if not GOOGLE_API_KEY:
 # ============================================================================
 
 # Gemini model used for response generation
-GEMINI_MODEL: str = "gemini-2.5-flash"
+GEMINI_MODEL: str = "gemini-2.0-flash"
 
 # HuggingFace embedding model
 EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"

@@ -12,6 +12,7 @@ from src.config.settings import (
 
 from src.utils.logger import logger
 from src.utils.exceptions import CustomException
+from pathlib import Path
 
 class GraphNodes:
     def __init__(self):
@@ -42,6 +43,14 @@ class GraphNodes:
                 doc.page_content
                 for doc in state["context"]
             )    
+            sources = []
+            for doc in state["context"]:
+                source = doc.metadata.get("source")           
+                if source:
+                    source_name = Path(source).name            
+                    if source_name not in sources:
+                        sources.append(source_name)
+
             history = []            
             for message in state["chat_history"]:
                 history.append(
@@ -52,12 +61,14 @@ class GraphNodes:
             response = chain.invoke(
                 {
                     "context": context,
+                    "chat_history": chat_history,
                     "question": state["question"],
                 }
             )    
             logger.info("Generated response.")
             return {
-                "answer": response
+                "answer": response,
+                "sources": sources,
             }
     
         except Exception as e:

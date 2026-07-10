@@ -1,6 +1,5 @@
 from src.graph.workflow import GraphWorkflow
 
-
 def main():
     workflow = GraphWorkflow()
     graph = workflow.build()
@@ -29,16 +28,18 @@ def main():
         "answer": "",
         "sources": [],
         "chat_history": [],
-    }
-    
+    }    
     result = graph.invoke(
         second_state,
         config=config,
     )
     
     print(result["answer"])
+    
+    print("\nSources:")
 
-
+    for source in result["sources"]:
+        print(f"- {source}")
 
 if __name__ == "__main__":
     main()

@@ -1,12 +1,12 @@
 import sys
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
 from src.graph.state import GraphState
 from src.vector_store.retriever import VectorStoreRetriever
 from src.prompts.prompt import RAG_PROMPT
 from src.config.settings import (
-    GEMINI_MODEL,
-    GOOGLE_API_KEY,
+    GROQ_API_KEY,
+    GROQ_MODEL,
     TEMPERATURE,
 )
 
@@ -17,9 +17,9 @@ class GraphNodes:
     def __init__(self):
 
         self.retriever = VectorStoreRetriever()
-        self.llm = ChatGoogleGenerativeAI(
-            model=GEMINI_MODEL,
-            google_api_key=GOOGLE_API_KEY,
+        self.llm = ChatGroq(
+            model=GROQ_MODEL,
+            groq_api_key=GROQ_API_KEY,
             temperature=TEMPERATURE,
         )
         self.parser = StrOutputParser()
@@ -42,6 +42,12 @@ class GraphNodes:
                 doc.page_content
                 for doc in state["context"]
             )    
+            history = []            
+            for message in state["chat_history"]:
+                history.append(
+                    f"{message.type}: {message.content}"
+                )
+            chat_history = "\n".join(history)
             chain = (RAG_PROMPT | self.llm | self.parser)   
             response = chain.invoke(
                 {

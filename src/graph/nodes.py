@@ -40,7 +40,8 @@ class GraphNodes:
     def generate(self, state: GraphState):
         try:
             context = "\n\n".join(
-                doc.page_content
+                f"Source: {Path(doc.metadata.get('source', 'Unknown')).name}\n"
+                f"{doc.page_content}"
                 for doc in state["context"]
             )    
             sources = []
@@ -50,6 +51,13 @@ class GraphNodes:
                     source_name = Path(source).name            
                     if source_name not in sources:
                         sources.append(source_name)
+            if not context.strip():
+                return {
+                    "answer": (
+                        "I couldn't find relevant information in the knowledge base."
+                    ),
+                    "sources": [],
+                }
 
             history = []            
             for message in state["chat_history"]:
@@ -69,6 +77,7 @@ class GraphNodes:
             return {
                 "answer": response,
                 "sources": sources,
+                "context": state["context"],
             }
     
         except Exception as e:

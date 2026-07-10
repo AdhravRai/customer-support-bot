@@ -2,6 +2,10 @@ import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage
 
 from src.graph.workflow import GraphWorkflow
+import uuid
+
+if "thread_id" not in st.session_state:
+    st.session_state.thread_id = str(uuid.uuid4())
 
 
 @st.cache_resource
@@ -123,7 +127,7 @@ if user_input:
 
     config = {
         "configurable": {
-            "thread_id": "streamlit-session"
+        "thread_id": st.session_state.thread_id
         }
     }
 
@@ -138,7 +142,14 @@ if user_input:
 
         answer = result["answer"]
         sources = result.get("sources", [])
+        documents = result["context"]
 
+        with st.expander("📚 Retrieved Context"):
+
+            for i, doc in enumerate(documents, start=1):
+                st.markdown(f"**Chunk {i}**")
+                st.write(doc.page_content)
+        
         with st.chat_message("assistant"):
 
             st.markdown(answer)
